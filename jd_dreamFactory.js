@@ -30,7 +30,7 @@ const JD_API_HOST = 'https://m.jingxi.com';
 
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-const randomCount = $.isNode() ? 20 : 5;
+const randomCount = 2;
 const tuanActiveId = `jfkcidGQavswLOBcAWljrw==`;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '';
@@ -426,7 +426,7 @@ function QueryFriendList() {
               $.log(`【今日招工进度】${hireListToday.length}/${hireNumMax}`);
               message += `【招工进度】${hireListToday.length}/${hireNumMax}\n`;
             } else {
-              console.log(`QueryFriendList异常：${JSON.stringify(data)}`)
+              console.log(`异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -494,7 +494,7 @@ function doTask(taskId) {
             if (data['ret'] === 0) {
               console.log("做任务完成！")
             } else {
-              console.log(`DoTask异常：${JSON.stringify(data)}`)
+              console.log(`异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -522,7 +522,6 @@ function userInfo() {
               data = data['data'];
               $.unActive = true;//标记是否开启了京喜活动或者选购了商品进行生产
               $.encryptPin = '';
-              $.shelvesList = [];
               if (data.factoryList && data.productionList) {
                 const production = data.productionList[0];
                 const factory = data.factoryList[0];
@@ -550,7 +549,7 @@ function userInfo() {
                 if (production.investedElectric >= production.needElectric) {
                   $.log(`可以对方商品了`)
                   // await exchangeProNotify()
-                }
+               }
               } else {
                 $.unActive = false;//标记是否开启了京喜活动或者选购了商品进行生产
                 if (!data.factoryList) {
@@ -622,7 +621,8 @@ function GetShelvesList(pageNo = 1) {
                 GetShelvesList(pageNo);
               }
             } else {
-              console.log(`GetShelvesList异常：${JSON.stringify(data)}`)
+              
+        console.log(`GetShelvesList异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -663,6 +663,7 @@ function DrawProductionStagePrize() {
   })
 }
 async function PickUp(encryptPin = $.encryptPin, help = false) {
+  $.pickUpMyselfComponent = true;
   const GetUserComponentRes = await GetUserComponent(encryptPin);
   if (GetUserComponentRes && GetUserComponentRes['ret'] === 0) {
     const { componentList } = GetUserComponentRes['data'];
@@ -672,6 +673,7 @@ async function PickUp(encryptPin = $.encryptPin, help = false) {
       } else {
         $.log(`自家地下暂无零件可收`)
       }
+      $.pickUpMyselfComponent = false;
     }
     for (let item of componentList) {
       await $.wait(1000);
@@ -690,7 +692,8 @@ async function PickUp(encryptPin = $.encryptPin, help = false) {
           if (help) {
             console.log(`收好友[${encryptPin}]零件失败：${PickUpComponentRes.msg},直接跳出`)
           } else {
-            console.log(`收自己地下零件失败：${PickUpComponentRes.msg},直接跳出`)
+            console.log(`收自己地下零件失败：${PickUpComponentRes.msg},直接跳出`);
+            $.pickUpMyselfComponent = false;
           }
           break
         }
@@ -763,6 +766,10 @@ function PickUpComponent(index, encryptPin) {
 }
 //偷好友的电力
 async function stealFriend() {
+  if (!$.pickUpMyselfComponent) {
+    $.log(`今日收取零件已达上限，偷好友零件也达到上限，故跳出`)
+    return
+  }
   await getFriendList();
   $.friendList = [...new Set($.friendList)];
   for (let i = 0; i < $.friendList.length; i++) {
@@ -1237,6 +1244,8 @@ async function exchangeProNotify() {
 }
 async function showMsg() {
   return new Promise(async resolve => {
+    message += `【收取自己零件】${$.pickUpMyselfComponent ? `获得${$.pickEle}电力` : `今日已达上限`}\n`;
+    message += `【收取好友零件】${$.pickUpMyselfComponent ? `获得${$.pickFriendEle}电力` : `今日已达上限`}\n`;
     let ctrTemp;
     if ($.isNode() && process.env.DREAMFACTORY_NOTIFY_CONTROL) {
       ctrTemp = `${process.env.DREAMFACTORY_NOTIFY_CONTROL}` === 'false';
@@ -1248,13 +1257,13 @@ async function showMsg() {
     if (ctrTemp) {
       $.msg($.name, '', message);
       if ($.isNode()) {
-        await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `${message}\n【收取零件】获得${$.pickEle}电力`);
+        await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `${message}`);
       }
     } else if (new Date().getHours() === 22) {
-      $.msg($.name, '', `${message}【收取自己零件】获得${$.pickEle}电力\n【收取${$.friendList.length}好友零件】获得${$.pickFriendEle}电力`)
-      $.log(`\n${message}【收取自己零件】获得${$.pickEle}电力\n【收取${$.friendList.length}好友零件】获得${$.pickFriendEle}电力`);
+      $.msg($.name, '', `${message}`)
+      $.log(`\n${message}`);
     } else {
-      $.log(`\n${message}【收取自己零件】获得${$.pickEle}电力\n【收取${$.friendList.length}好友零件】获得${$.pickFriendEle}电力`);
+      $.log(`\n${message}`);
     }
     resolve()
   })
