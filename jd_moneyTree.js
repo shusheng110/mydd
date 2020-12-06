@@ -28,6 +28,8 @@ if ($.isNode()) {
 } else {
   cookiesArr.push($.getdata('CookieJD'));
   cookiesArr.push($.getdata('CookieJD2'));
+cookiesArr.push($.getdata('CookieJD3'));
+cookiesArr.push($.getdata('CookieJD4'));
 }
 
 let jdNotify = true;//是否开启静默运行，默认true开启
@@ -573,7 +575,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
       }
     }
     $.post(options, (err, resp, data) => {
@@ -638,7 +640,7 @@ function taskurl(function_id, body) {
       'Content-Type' : `application/x-www-form-urlencoded;charset=UTF-8`,
       'Host' : `ms.jr.jd.com`,
       'Connection' : `keep-alive`,
-      'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+      'User-Agent' :"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
       'Referer' : `https://uua.jr.jd.com/uc-fe-wxgrowing/moneytree/index/?channel=yxhd&lng=113.325896&lat=23.204600&sid=2d98e88cf7d182f60d533476c2ce777w&un_area=19_1601_50258_51885`,
       'Accept-Language' : `zh-cn`
     }
