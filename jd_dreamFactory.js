@@ -426,7 +426,7 @@ function QueryFriendList() {
               $.log(`【今日招工进度】${hireListToday.length}/${hireNumMax}`);
               message += `【招工进度】${hireListToday.length}/${hireNumMax}\n`;
             } else {
-              console.log(`异常：${JSON.stringify(data)}`)
+              console.log(`QueryFriendList异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -494,7 +494,7 @@ function doTask(taskId) {
             if (data['ret'] === 0) {
               console.log("做任务完成！")
             } else {
-              console.log(`异常：${JSON.stringify(data)}`)
+              console.log(`DoTask异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -522,6 +522,7 @@ function userInfo() {
               data = data['data'];
               $.unActive = true;//标记是否开启了京喜活动或者选购了商品进行生产
               $.encryptPin = '';
+              $.shelvesList = [];
               if (data.factoryList && data.productionList) {
                 const production = data.productionList[0];
                 const factory = data.factoryList[0];
@@ -549,7 +550,7 @@ function userInfo() {
                 if (production.investedElectric >= production.needElectric) {
                   $.log(`可以对方商品了`)
                   // await exchangeProNotify()
-               }
+                }
               } else {
                 $.unActive = false;//标记是否开启了京喜活动或者选购了商品进行生产
                 if (!data.factoryList) {
