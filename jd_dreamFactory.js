@@ -31,7 +31,7 @@ const JD_API_HOST = 'https://m.jingxi.com';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 const randomCount = 2;
-// const tuanActiveId = `jfkcidGQavswLOBcAWljrw==`;
+const tuanActiveId = `ilOin38J30PcT9xnWbx9lw==`;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '';
 //const inviteCodes = ['V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=', 'PDPM257r_KuQhil2Y7koNw==', "gB99tYLjvPcEFloDgamoBw=="];
@@ -90,18 +90,30 @@ if ($.isNode()) {
 async function jdDreamFactory() {
   await userInfo();
   await QueryFriendList();//查询今日招工情况以及剩余助力次数
+  await $.wait(500);
   await joinLeaderTuan();//参团
+  await $.wait(500);
   await helpFriends();
+  await $.wait(500);
   if (!$.unActive) return
   await getUserElectricity();
+  await $.wait(500);
   await taskList();
+  await $.wait(500);
   await investElectric();
+  await $.wait(500);
   await QueryHireReward();//收取招工电力
+  await $.wait(500);
   await PickUp();//收取自家的地下零件
+  await $.wait(500);
   await stealFriend();
+  await $.wait(500);
   await tuanActivity();
+  await $.wait(500);
   await QueryAllTuan();
+  await $.wait(500);
   await exchangeProNotify();
+  await $.wait(500);
   await showMsg();
 }
 

@@ -92,9 +92,13 @@ async function jdFactory() {
   // $.newUser === 1新用户
   if ($.newUser === 1) return
   await jdfactory_collectElectricity();//收集产生的电量
+  await $.wait(500);
   await jdfactory_getTaskDetail();
+  await $.wait(500);
   await doTask();
+  await $.wait(500);
   await algorithm();//投入电力逻辑
+  await $.wait(500);
   await showMsg();
 }
 function showMsg() {
