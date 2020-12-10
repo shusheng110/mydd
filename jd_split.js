@@ -19,6 +19,11 @@ cron "10 0 * * *" script-path=https://raw.githubusercontent.com/lxk0301/jd_scrip
 
 ============小火箭=========
 金榜年终奖 = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_split.js, cronexpr="10 0 * * *", timeout=200, enable=true
+ 
+P04z54XCjVUnIaW5mQJC2b_1Q
+P04z54XCjVUnIaW5m9cZyqZhyY03MrdWd3khA
+P04z54XCjVUnIaW5m9cZ2b_1H0fkODV3GOOycc
+P04z54XCjVUnIaW5m9cZ2Wu3n0bxJf6Y7tExv4
  */
 const $ = new Env('金榜年终奖');
 
@@ -38,7 +43,7 @@ if ($.isNode()) {
   cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-$.newShareCodes = [`P04z54XCjVUnIaW5nJcXCCyoR8C6p8txXBH`, 'P04z54XCjVUnIaW5m9cZ2T6jChKki0Hfndla5k', 'P04z54XCjVUnIaW5u2ak7ZCdan1BT0NlbBGZ1-rnMYj', 'P04z54XCjVUnIaW5m9cZ2ariXVJwI64DaVTNXQ'];
+$.newShareCodes = [`P04z54XCjVUnIaW5mQJC2b_1Q`, 'P04z54XCjVUnIaW5m9cZyqZhyY03MrdWd3khA', 'P04z54XCjVUnIaW5m9cZ2b_1H0fkODV3GOOycc', 'P04z54XCjVUnIaW5m9cZ2Wu3n0bxJf6Y7tExv4'];
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
