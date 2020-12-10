@@ -1,5 +1,8 @@
 /*
 金榜年终奖
+脚本会给内置的码进行助力
+活动时间：2020-12-12日结束
+活动入口：京东APP首页右边浮动飘窗
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
@@ -23,7 +26,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-const randomCount = 0;
+const randomCount = $.isNode() ? 20 : 5;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -35,7 +38,7 @@ if ($.isNode()) {
   cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-$.newShareCodes = [`P04z54XCjVUnIaW5mQJC2b_1Q`, 'P04z54XCjVUnIaW5m9cZyqZhyY03MrdWd3khA','P04z54XCjVUnIaW5m9cZ2b_1H0fkODV3GOOycc','P04z54XCjVUnIaW5m9cZ2Wu3n0bxJf6Y7tExv4'];
+$.newShareCodes = [`P04z54XCjVUnIaW5nJcXCCyoR8C6p8txXBH`, 'P04z54XCjVUnIaW5m9cZ2T6jChKki0Hfndla5k', 'P04z54XCjVUnIaW5u2ak7ZCdan1BT0NlbBGZ1-rnMYj', 'P04z54XCjVUnIaW5m9cZ2ariXVJwI64DaVTNXQ'];
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
@@ -79,14 +82,8 @@ async function jdSplit() {
 }
 function showMsg() {
   return new Promise(resolve => {
-    if (!jdNotify) {
-      $.msg($.name, '', `${message}`);
-    } else {
-      $.log(`京东账号${$.index}${$.nickName}\n${message}`);
-    }
-    if (new Date().getHours() === 23) {
-      $.msg($.name, '', `京东账号${$.index}${$.nickName}\n${message}`);
-    }
+    message += `任务已做完：具体奖品去发活动页面查看\n活动入口：京东APP首页右边浮动飘窗`;
+    $.msg($.name, '', `京东账号${$.index}${$.nickName}\n${message}`);
     resolve()
   })
 }
@@ -243,7 +240,7 @@ function taskPostUrl(function_id, body = {}, function_id2) {
       "origin": "https://h5.m.jd.com",
       "referer": "https://h5.m.jd.com/",
       'Content-Type': 'application/x-www-form-urlencoded',
-      "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
     }
   }
 }
@@ -259,7 +256,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
       }
     }
     $.post(options, (err, resp, data) => {

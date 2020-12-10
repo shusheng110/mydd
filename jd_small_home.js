@@ -53,7 +53,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2'), $.getdata('CookieJD3'), $.getdata('CookieJD4')]);
+  cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
 
 const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
@@ -157,7 +157,8 @@ async function doChannelsListTask(taskId, taskType) {
 }
 async function helpFriends() {
   await updateInviteCode();
-  if (!$.updatePkActivityIdRes) await updateInviteCodeCDN();
+  if (!$.inviteCodes) await updateInviteCodeCDN();
+  if (!$.inviteCodes) await updateInviteCodeCDN('https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateSmallHomeInviteCode.json');
   for (let item of $.inviteCodes.inviteCode) {
     if (!item) continue
     await createAssistUser(item, $.createAssistUserID || "1318106976846299138");
@@ -629,7 +630,7 @@ function loginHome() {
         "Host": "jdhome.m.jd.com",
         "Origin": "https://jdhome.m.jd.com",
         "Referer": "https://jdhome.m.jd.com/dist/taro/index.html/",
-        "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
       }
     }
     $.post(options, async (err, resp, data) => {
@@ -671,7 +672,7 @@ function login(userName) {
         "Host": "lkyl.dianpusoft.cn",
         "Origin": "https://lkyl.dianpusoft.cn",
         "Referer": "https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html",
-        "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
       }
     }
     $.post(options, async (err, resp, data) => {
@@ -710,8 +711,8 @@ function updateInviteCode(url = 'https://raw.githubusercontent.com/lxk0301/updat
     })
   })
 }
-function updateInviteCodeCDN(url = 'https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateSmallHomeInviteCode.json') {
-  return new Promise(resolve => {
+function updateInviteCodeCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam/master/jd_updateSmallHomeInviteCode.json') {
+  return new Promise(async resolve => {
     $.get({url}, async (err, resp, data) => {
       try {
         if (err) {
@@ -726,6 +727,8 @@ function updateInviteCodeCDN(url = 'https://cdn.jsdelivr.net/gh/lxk0301/updateTe
         resolve();
       }
     })
+    await $.wait(3000)
+    resolve();
   })
 }
 function taskUrl(url, body = {}) {
@@ -740,7 +743,7 @@ function taskUrl(url, body = {}) {
       "Host": "lkyl.dianpusoft.cn",
       "Referer": "https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html",
       "token": $.token,
-      "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
     }
   }
 }
@@ -756,7 +759,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
       }
     }
     $.post(options, (err, resp, data) => {

@@ -316,6 +316,7 @@ async function businessCircleActivity() {
       console.log(`\n注：PK会在每天的七点自动随机加入lxk0301创建的队伍\n`)
       await updatePkActivityId();
       if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN();
+      if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json');
       console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes.pkActivityId}`);
       console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
       if ($.updatePkActivityIdRes && ($.updatePkActivityIdRes.pkActivityId === pkActivityId)) {
@@ -724,8 +725,8 @@ function updatePkActivityId(url = 'https://raw.githubusercontent.com/lxk0301/upd
     })
   })
 }
-function updatePkActivityIdCDN(url = 'https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json') {
-  return new Promise(resolve => {
+function updatePkActivityIdCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam/master/jd_updateTeam.json') {
+  return new Promise(async resolve => {
     //https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json
     //https://raw.githubusercontent.com/lxk0301/updateTeam/master/jd_updateTeam.json
     $.get({url}, async (err, resp, data) => {
@@ -742,6 +743,8 @@ function updatePkActivityIdCDN(url = 'https://cdn.jsdelivr.net/gh/lxk0301/update
         resolve();
       }
     })
+    await $.wait(3000)
+    resolve();
   })
 }
 function smtgDoShopTask(taskId, itemId) {
@@ -1371,7 +1374,7 @@ function requireConfig() {
       })
       if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
     } else {
-      cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2'),$.getdata('CookieJD3'),$.getdata('CookieJD4')])
+      cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')])
     }
     console.log(`共${cookiesArr.length}个京东账号\n`);
     console.log(`京小超已改版,目前暂不用助力, 故无助力码`)
@@ -1392,7 +1395,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent":"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
       }
     }
     $.post(options, (err, resp, data) => {
@@ -1424,7 +1427,7 @@ function taskUrl(function_id, body = {}) {
   return {
     url: `${JD_API_HOST}?functionId=${function_id}&appid=jdsupermarket&clientVersion=8.0.0&client=m&body=${escape(JSON.stringify(body))}&t=${Date.now()}`,
     headers: {
-      'User-Agent':"jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
+      'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
       'Host': 'api.m.jd.com',
       'Cookie': cookie,
       'Referer': 'https://jdsupermarket.jd.com/game',
