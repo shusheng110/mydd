@@ -25,7 +25,14 @@ PUBG = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_script
 93717cc3-8b42-4869-8755-897e28da3a28
 c4767b87-251d-4f1b-b59a-f27f0f13d5c3
 
-
+9bf8e534-ca9e-4045-b202-a4cd87c9cd4a
+3162e03c-a9de-4bac-a8d9-a5d12de29993
+27ccd78d-fa73-4892-95af-8215a7a84d8d
+28a366c9-9ce1-4a4f-a063-226d4ab02bb5
+3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5
+9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5
+9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@28a366c9-9ce1-4a4f-a063-226d4ab02bb5
+9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d
  */
 const $ = new Env('PUBG');
 !function(n) {
@@ -141,7 +148,7 @@ if ($.isNode()) {
   cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
 const JD_API_HOST = 'https://starsingle.m.jd.com/guardianstar/';
-const inviteCodes = ['7c05b7c0-bacf-45e9-827e-7b9714be7ac9@93717cc3-8b42-4869-8755-897e28da3a28@c4767b87-251d-4f1b-b59a-f27f0f13d5c3','4ad0b665-1a91-4ce6-b11e-df80330c6019@93717cc3-8b42-4869-8755-897e28da3a28@c4767b87-251d-4f1b-b59a-f27f0f13d5c3','4ad0b665-1a91-4ce6-b11e-df80330c6019@7c05b7c0-bacf-45e9-827e-7b9714be7ac9@c4767b87-251d-4f1b-b59a-f27f0f13d5c3','4ad0b665-1a91-4ce6-b11e-df80330c6019@7c05b7c0-bacf-45e9-827e-7b9714be7ac9@93717cc3-8b42-4869-8755-897e28da3a28']
+const inviteCodes = ['3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d']
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -215,7 +222,7 @@ function taskList(get=1) {
           if (safeGet(data)) {
             data = JSON.parse(data);
             let vo = data.data[0]
-            console.log(`您的${$.name}好友助力码为：${vo.shareId}`)
+            if (vo.shareId) console.log(`您的${$.name}好友助力码为：${vo.shareId}`)
             for (let i = 0; i< vo.venueList.length;++i){
               let venue = vo.venueList[i]
               if(venue.venueStatus === 1) {
@@ -241,7 +248,7 @@ function taskList(get=1) {
             }
             for (let i = 0; i< vo.shopList.length;++i){
               let shop = vo.shopList[i]
-              if(shop.shopStatus === 0) {
+              if(shop.shopStatus === 0  || shop.shopStatus === 1) {
                 console.log(`【关注店铺】去关注店铺 ${shop.shopName}`)
                 await doTask(`starId=PUBG&type=shop&id=${shop.shopId}&status=1`)
                 await $.wait(10000)
