@@ -1,13 +1,15 @@
-
 /**
 *
     Name: 京喜财富岛
     Add: 京喜App==>>全民赚大钱
+    Update: 2020/12/10 9:40
     Thanks:
       whyour大佬
       TG: https://t.me/joinchat/O1WgnBbM18YjQQVFQ_D86w
       GitHub: https://github.com/whyour
-
+      
+      新用户签到问题反馈者：https://github.com/NanjolnoRing
+      
     Quantumult X:
     [task_local]
     0 * * * * https://raw.githubusercontent.com/MoPoQAQ/Script/main/Me/jx_cfd.js, tag=京喜财富岛, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
@@ -84,8 +86,8 @@ $.info = {};
 
       const endInfo = await getUserInfo();
       $.result.push(
-        `任务前财富值：${beginInfo.ddwMoney} 任务后财富值：${endInfo.ddwMoney}`,
-        `获得财富值：${endInfo.ddwMoney - beginInfo.ddwMoney}`
+        `任务前💸：${beginInfo.ddwMoney} 任务后💸：${endInfo.ddwMoney}`,
+        `获得💸：${endInfo.ddwMoney - beginInfo.ddwMoney}`
       );
 
       await $.wait(500);
@@ -153,9 +155,11 @@ function querySignList() {
             $.showLog ? data : ""
           }`
         );
-        const nextSign = Sign.filter(x => x.dwStatus === 0)[0];
-        if (nextSign && nextSign.ddwMoney) {
-          await userSignReward(nextSign.dwUserFlag, nextSign.ddwMoney);
+        const nextSign = Sign.filter(x => x.dwShowFlag === 1);
+        if (nextSign.dwStatus === 0 && nextSign.ddwMoney) {
+          await userSignReward(dwUserFlag, nextSign.ddwMoney);
+        } else {
+          $.log(`\n签到：你今日已签到过啦，请明天再来`);
         }
       } catch (e) {
         $.logErr(e, resp);
@@ -177,9 +181,9 @@ async function userSignReward(dwUserFlag,ddwMoney) {
       async (err, resp, data) => {
         try {
           //$.log(data)
-          const { iRet, sData, sErrMsg } = JSON.parse(data);
+          const { iRet, sData: { ddwMoney }, sErrMsg } = JSON.parse(data);
           $.log(
-            `\n签到：${sErrMsg}，获得财富 ¥ ${sData.dwMoney || 0}\n${
+            `\n签到：${sErrMsg}，获得财富 ¥ ${ddwMoney || 0}\n${
               $.showLog ? data : ""
             }`
           );
@@ -208,7 +212,7 @@ function getMoney() {
             async (err, resp, data) => {
               try {
                 const { dwMoney, iRet, sErrMsg, strPin} = JSON.parse(data);
-                $.log(`\n【${sceneList[sceneId].strSceneName}】好友${strPin} : 获取助力财富值：¥ ${dwMoney || 0}\n${$.showLog ? data : ""}`);
+                $.log(`\n【${sceneList[sceneId].strSceneName}】👬好友${strPin} : 获取助力财富值：¥ ${dwMoney || 0}\n${$.showLog ? data : ""}`);
               } catch (e) {
                 $.logErr(e, resp);
               } finally {
@@ -223,7 +227,7 @@ function getMoney() {
         async (err, resp, data) => {
           try {
             const { iRet, dwMoney, sErrMsg } = JSON.parse(data);
-            $.log(`\n【${sceneList[sceneId].strSceneName}】岛主 : ${sErrMsg} 获取财富值：¥ ${dwMoney || 0}\n${$.showLog ? data : ""}`);
+            $.log(`\n【${sceneList[sceneId].strSceneName}】🏝岛主 : ${sErrMsg} 获取财富值：¥ ${dwMoney || 0}\n${$.showLog ? data : ""}`);
           } catch (e) {
             $.logErr(e, resp);
           } finally {
@@ -304,12 +308,16 @@ async function treasureHunt() {
   if($.info.dwXBRemainCnt > 0) {
     const xbDetail = $.info.XBDetail;
     for (let i = 0; i < xbDetail.length; i++) {
-      const { strIndex }= xbDetail[i];
-      await doTreasureHunt(strIndex);
-      await $.wait(3000);
+      const { ddwColdEndTm, strIndex }= xbDetail[i];
+      if( Date.now() > ddwColdEndTm ) {
+        await doTreasureHunt(strIndex);
+        await $.wait(3000);
+      } else {
+        $.log(`\n🎁寻宝：宝藏冷却中，请等待冷却完毕`);
+      }
     }
   } else {
-    $.log(`\n寻宝：寻宝次数不足`);
+    $.log(`\n🎁寻宝：寻宝次数不足`);
   }
 }
 
@@ -322,7 +330,7 @@ function doTreasureHunt(place) {
           //$.log(data);
           const { iRet, dwExpericnce, sErrMsg } = JSON.parse(data);
           $.log(
-            `\n寻宝：${sErrMsg} 获取随机奖励：¥ ${dwExpericnce || 0} \n${
+            `\n【${place}】🎁寻宝：${sErrMsg} ，获取随机奖励：¥ ${dwExpericnce || 0} \n${
               $.showLog ? data : ""
             }`
           );
@@ -515,7 +523,7 @@ function soltMachine(strCouponPool,strGoodsPool,ddwConfVersion) {
     $.get(taskUrl(`consume/SlotMachine`,`strCouponPool=${strCouponPool}&strGoodsPool=${strGoodsPool}&ddwConfVersion=${ddwConfVersion}`), async(err, resp, data) => {
       try {
         const { iRet, sErrMsg, strAwardPoolName } = JSON.parse(data);
-        $.log(`\n【抽奖结果】 ${strAwardPoolName != "" ? "未中奖" : strAwardPoolName} \n${ $.showLog ? data : '' }`);
+        $.log(`\n【抽奖结果】🎰 ${strAwardPoolName != "" ? "未中奖" : strAwardPoolName} \n${ $.showLog ? data : '' }`);
       } catch (e) {
         $.logErr(e, resp);
       } finally {
