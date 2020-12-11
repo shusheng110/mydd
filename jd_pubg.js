@@ -145,7 +145,12 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
+  let cookiesData = $.getdata('CookiesJD') || "[]";
+  cookiesData = jsonParse(cookiesData);
+  cookiesArr = cookiesData.map(item => item.cookie);
+  cookiesArr.reverse();
+  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
+  cookiesArr.reverse();
 }
 const JD_API_HOST = 'https://starsingle.m.jd.com/guardianstar/';
 const inviteCodes = ['3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@27ccd78d-fa73-4892-95af-8215a7a84d8d@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@28a366c9-9ce1-4a4f-a063-226d4ab02bb5','9bf8e534-ca9e-4045-b202-a4cd87c9cd4a@3162e03c-a9de-4bac-a8d9-a5d12de29993@27ccd78d-fa73-4892-95af-8215a7a84d8d']
@@ -509,6 +514,17 @@ function safeGet(data) {
     console.log(e);
     console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
     return false;
+  }
+}
+function jsonParse(str) {
+  if (typeof str == "string") {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      console.log(e);
+      $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
+      return [];
+    }
   }
 }
 // prettier-ignore

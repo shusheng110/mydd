@@ -34,7 +34,12 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
+  let cookiesData = $.getdata('CookiesJD') || "[]";
+  cookiesData = jsonParse(cookiesData);
+  cookiesArr = cookiesData.map(item => item.cookie);
+  cookiesArr.reverse();
+  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
+  cookiesArr.reverse();
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = ['P04z54XCjVUm4aW5m9cZyqZhyY03M5EGxCTtg@P04z54XCjVUm4aW5m9cZ2b_1H0fkLRDyhPQB9s@P04z54XCjVUm4aW5m9cZ2Wu3n0bxBQHF5y1ZZk','P04z54XCjVUm4aW5mQJC2b_1Q@P04z54XCjVUm4aW5m9cZ2b_1H0fkLRDyhPQB9s@P04z54XCjVUm4aW5m9cZ2Wu3n0bxBQHF5y1ZZk','P04z54XCjVUm4aW5mQJC2b_1Q@P04z54XCjVUm4aW5m9cZyqZhyY03M5EGxCTtg@P04z54XCjVUm4aW5m9cZ2Wu3n0bxBQHF5y1ZZk','P04z54XCjVUm4aW5mQJC2b_1Q@P04z54XCjVUm4aW5m9cZyqZhyY03M5EGxCTtg@P04z54XCjVUm4aW5m9cZ2b_1H0fkLRDyhPQB9s'];
@@ -397,6 +402,17 @@ function safeGet(data) {
     console.log(e);
     console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
     return false;
+  }
+}
+function jsonParse(str) {
+  if (typeof str == "string") {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      console.log(e);
+      $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
+      return [];
+    }
   }
 }
 // prettier-ignore
