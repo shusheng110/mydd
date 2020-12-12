@@ -11,14 +11,14 @@
 [task_local]
 #京喜工厂
 10 * * * * https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js, tag=京喜工厂, enabled=true
- 
+
 ================Loon==============
 [Script]
 cron "10 * * * *" script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js,tag=京喜工厂
- 
+
 ===============Surge=================
 京喜工厂 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js
- 
+
 ============小火箭=========
 京喜工厂 = type=cron,script-path=https://raw.githubusercontent.com/lxk0301/jd_scripts/master/jd_dreamFactory.js, cronexpr="10 * * * *", timeout=200, enable=true
 
@@ -30,11 +30,11 @@ const JD_API_HOST = 'https://m.jingxi.com';
 
 const notify = $.isNode() ? require('./sendNotify') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-const randomCount = 2;
-const tuanActiveId = `ilOin38J30PcT9xnWbx9lw==`;
+const randomCount = $.isNode() ? 20 : 5;
+const tuanActiveId = `gaVXW_NJ0KPEA2LyUhoXzA==`;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '';
-//const inviteCodes = ['V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=', 'PDPM257r_KuQhil2Y7koNw==', "gB99tYLjvPcEFloDgamoBw=="];
+const inviteCodes = ['V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=', 'PDPM257r_KuQhil2Y7koNw==', "gB99tYLjvPcEFloDgamoBw==", '-OvElMzqeyeGBWazWYjI1Q=='];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -95,30 +95,18 @@ if ($.isNode()) {
 async function jdDreamFactory() {
   await userInfo();
   await QueryFriendList();//查询今日招工情况以及剩余助力次数
-  await $.wait(500);
   await joinLeaderTuan();//参团
-  await $.wait(500);
   await helpFriends();
-  await $.wait(500);
   if (!$.unActive) return
   await getUserElectricity();
-  await $.wait(500);
   await taskList();
-  await $.wait(500);
   await investElectric();
-  await $.wait(500);
   await QueryHireReward();//收取招工电力
-  await $.wait(500);
   await PickUp();//收取自家的地下零件
-  await $.wait(500);
   await stealFriend();
-  await $.wait(500);
   await tuanActivity();
-  await $.wait(500);
   await QueryAllTuan();
-  await $.wait(500);
   await exchangeProNotify();
-  await $.wait(500);
   await showMsg();
 }
 
@@ -559,6 +547,8 @@ function userInfo() {
                 console.log(`当前电力：${data.user.electric}`)
                 console.log(`当前等级：${data.user.currentLevel}`)
                 console.log(`分享码: ${data.user.encryptPin}`);
+                console.log(`已投入电力：${production.investedElectric}`);
+                console.log(`所需电力：${production.needElectric}`);
                 console.log(`生产进度：${((production.investedElectric / production.needElectric) * 100).toFixed(2)}%`);
                 message += `【京东账号${$.index}】${$.nickName}\n`
                 message += `【生产商品】${$.productName}\n`;
@@ -639,8 +629,7 @@ function GetShelvesList(pageNo = 1) {
                 GetShelvesList(pageNo);
               }
             } else {
-              
-        console.log(`GetShelvesList异常：${JSON.stringify(data)}`)
+              console.log(`GetShelvesList异常：${JSON.stringify(data)}`)
             }
           }
         }
@@ -792,9 +781,9 @@ async function stealFriend() {
   $.friendList = [...new Set($.friendList)];
   for (let i = 0; i < $.friendList.length; i++) {
     let pin = $.friendList[i];//好友的encryptPin
-    // if (pin === 'V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=' || pin === 'Bo-jnVs_m9uBvbRzraXcSA==') {
-    //   continue
-    // }
+    if (pin === 'V5LkjP4WRyjeCKR9VRwcRX0bBuTz7MEK0-E99EJ7u0k=' || pin === 'Bo-jnVs_m9uBvbRzraXcSA==') {
+      continue
+    }
     await PickUp(pin, true);
     // await getFactoryIdByPin(pin);//获取好友工厂ID
     // if ($.stealFactoryId) await collectElectricity($.stealFactoryId,true, pin);
@@ -918,7 +907,7 @@ function QueryActiveConfig() {
         "Cookie": cookie,
         "Host": "m.jingxi.com",
         "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
       }
     }
     $.get(options, (err, resp, data) => {
@@ -958,7 +947,7 @@ function QueryTuan(activeId, tuanId) {
         "Cookie": cookie,
         "Host": "m.jingxi.com",
         "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
       }
     }
     $.get(options, (err, resp, data) => {
@@ -997,7 +986,7 @@ function CreateTuan() {
         "Cookie": cookie,
         "Host": "m.jingxi.com",
         "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
       }
     }
     $.get(options, (err, resp, data) => {
@@ -1026,6 +1015,12 @@ function CreateTuan() {
 async function joinLeaderTuan() {
   await updateTuanIds();
   if (!$.tuanIdS) await updateTuanIdsCDN();
+  if (!$.tuanIdS) await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateFactoryTuanId.json');
+  for (let tuanId of $.tuanIdS.tuanIds) {
+    if (!tuanId) continue
+    await JoinTuan(tuanId);
+  }
+  if (!$.tuanIdS) await updateTuanIdsCDN('https://gitee.com/shylocks/updateTeam/raw/main/jd_updateFactoryTuanId.json');
   for (let tuanId of $.tuanIdS.tuanIds) {
     if (!tuanId) continue
     await JoinTuan(tuanId);
@@ -1082,7 +1077,7 @@ function QueryAllTuan() {
         "Cookie": cookie,
         "Host": "m.jingxi.com",
         "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
       }
     }
     $.get(options, async (err, resp, data) => {
@@ -1139,7 +1134,7 @@ function tuanAward(activeId, tuanId, isTuanLeader = true) {
         "Cookie": cookie,
         "Host": "m.jingxi.com",
         "Referer": "https://st.jingxi.com/pingou/dream_factory/divide.html",
-        "User-Agent": "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;"
+        "User-Agent": "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;"
       }
     }
     $.get(options, async (err, resp, data) => {
@@ -1200,8 +1195,11 @@ function updateTuanIds(url = 'https://raw.githubusercontent.com/lxk0301/updateTe
   })
 }
 function updateTuanIdsCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam/master/jd_updateFactoryTuanId.json') {
-  return new Promise(resolve => {
-    $.get({url}, (err, resp, data) => {
+  return new Promise(async resolve => {
+    $.get({url,
+      headers:{
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1214,6 +1212,8 @@ function updateTuanIdsCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam/mast
         resolve();
       }
     })
+    await $.wait(3000)
+    resolve();
   })
 }
 function checkExchange() {
@@ -1361,7 +1361,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": "Mozilla/5.0 (Linux; Android 10; V1986A Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
       }
     }
     $.post(options, (err, resp, data) => {
@@ -1409,7 +1409,7 @@ function taskurl(functionId, body = '') {
       'Host': 'm.jingxi.com',
       'Accept': '*/*',
       'Connection': 'keep-alive',
-      'User-Agent': 'jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 10; V1986A Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36',
+      'User-Agent': 'jdpingou;iPhone;3.14.4;14.0;ae75259f6ca8378672006fc41079cd8c90c53be8;network/wifi;model/iPhone10,2;appBuild/100351;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/62;pap/JA2015_311210;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
       'Accept-Language': 'zh-cn',
       'Referer': 'https://wqsd.jd.com/pingou/dream_factory/index.html',
       'Accept-Encoding': 'gzip, deflate, br',
@@ -1428,7 +1428,7 @@ function newtasksysUrl(functionId, taskId) {
       'Host': 'm.jingxi.com',
       'Accept': '*/*',
       'Connection': 'keep-alive',
-      'User-Agent': "jdapp;android;9.3.0;10;aa5338becf2d29a7;network/wifi;model/V1986A;addressid/881151041;aid/aa5338becf2d29a7;oaid/;osVer/29;appBuild/85799;psn/aa5338becf2d29a7|223;psq/4;uid/aa5338becf2d29a7;adk/;ads/;pap/JA2015_311210|9.3.0|ANDROID 10;osv/10;pv/220.4;jdv/0|kong|t_1001284498_2011191675_8732|jingfen|faf32b1be95d48a8be98fbc4fc2657b8|1606209627;ref/com.jd.lib.personal.view.fragment.JDPersonalFragment;partner/vivo;apprpd/MyJD_Main;jdSupportDarkMode/0;",
+      'User-Agent': "jdpingou;iPhone;3.15.2;13.5.1;90bab9217f465a83a99c0b554a946b0b0d5c2f7a;network/wifi;model/iPhone12,1;appBuild/100365;ADID/696F8BD2-0820-405C-AFC0-3C6D028040E5;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/14;pap/JA2015_311210;brand/apple;supportJDSHWK/1;",
       'Accept-Language': 'zh-cn',
       'Referer': 'https://wqsd.jd.com/pingou/dream_factory/index.html',
       'Accept-Encoding': 'gzip, deflate, br',
