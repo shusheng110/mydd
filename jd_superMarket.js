@@ -64,8 +64,6 @@ let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好�
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-        } else {
-          $.setdata('', `CookieJD${i ? i + 1 : "" }`);//cookie失效，故清空cookie。$.setdata('', `CookieJD${i ? i + 1 : "" }`);//cookie失效，故清空cookie。
         }
         continue
       }
@@ -315,7 +313,7 @@ async function businessCircleActivity() {
     if (joinStatus === 0) {
       console.log(`\n注：PK会在每天的七点自动随机加入lxk0301创建的队伍\n`)
       await updatePkActivityId();
-      if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN();
+      if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://gitee.com/lxk0301/updateTeam/raw/master/jd_updateTeam.json');
       if (!$.updatePkActivityIdRes) await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json');
       console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes.pkActivityId}`);
       console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
@@ -347,7 +345,7 @@ async function businessCircleActivity() {
           }
         ]
         Teams = $.updatePkActivityIdRes['Teams'] || Teams;
-        const randomNum = randomFriendPin(0, Teams.length - 1);
+        const randomNum = randomNumber(0, Teams.length);
 
         const res = await smtg_joinPkTeam(Teams[randomNum].teamId, Teams[randomNum].inviteCode, pkActivityId);
         if (res && res.data.bizCode === 0) {
@@ -463,7 +461,7 @@ async function businessCircleActivity() {
       const BusinessCircleList = await smtg_getBusinessCircleList();
       if (BusinessCircleList.data.bizCode === 0) {
         const { businessCircleVOList } = BusinessCircleList.data.result;
-        const { circleId } = businessCircleVOList[randomFriendPin(0, businessCircleVOList.length -1)];
+        const { circleId } = businessCircleVOList[randomNumber(0, businessCircleVOList.length)];
         const joinBusinessCircleRes = await smtg_joinBusinessCircle(circleId);
         console.log(`随机加入商圈结果：${JSON.stringify(joinBusinessCircleRes)}`)
       }
@@ -729,7 +727,10 @@ function updatePkActivityIdCDN(url = 'https://raw.fastgit.org/lxk0301/updateTeam
   return new Promise(async resolve => {
     //https://cdn.jsdelivr.net/gh/lxk0301/updateTeam@master/jd_updateTeam.json
     //https://raw.githubusercontent.com/lxk0301/updateTeam/master/jd_updateTeam.json
-    $.get({url}, async (err, resp, data) => {
+    const headers = {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+    }
+    $.get({ url, headers }, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -1379,7 +1380,8 @@ function requireConfig() {
       cookiesArr = cookiesData.map(item => item.cookie);
       cookiesArr.reverse();
       cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-      cookiesArr.reverse();
+  cookiesArr.reverse();
+  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
     }
     console.log(`共${cookiesArr.length}个京东账号\n`);
     console.log(`京小超已改版,目前暂不用助力, 故无助力码`)
@@ -1443,10 +1445,10 @@ function taskUrl(function_id, body = {}) {
 /**
  * 生成随机数字
  * @param {number} min 最小值（包含）
- * @param {number} max 最大值（包含）
+ * @param {number} max 最大值（不包含）
  */
-function randomFriendPin(min, max) {
-  return Math.round(Math.random()*(max - min) + min);
+function randomNumber(min = 0, max = 100) {
+  return Math.min(Math.floor(min + Math.random() * (max - min)), max);
 }
 function jsonParse(str) {
   if (typeof str == "string") {
@@ -1454,7 +1456,7 @@ function jsonParse(str) {
       return JSON.parse(str);
     } catch (e) {
       console.log(e);
-      $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
+      $.msg($.name, '', '请勿随意在BoxJs输入框修改内容\n建议通过脚本去获取cookie')
       return [];
     }
   }
